@@ -42,7 +42,17 @@ namespace
     QColor dlPieceColor(const QColor &pieceColor)
     {
         const QColor green {Qt::green};
-        return QColor::fromHsl(green.hslHue(), pieceColor.hslSaturation(), pieceColor.lightness());
+        int greenHue = green.hslHue();
+        int pieceHue = pieceColor.hslHue();
+        int complementaryHue = (pieceHue + 180) % 360; // Calculate complementary hue
+
+        // Check if pieceColor's hue is within 20% of Qt::green's hue
+        bool isCloseToGreen = std::abs(pieceHue - greenHue) <= (360 * 0.2);
+
+        // Use complementary hue if close to green, otherwise stick to green's hue
+        int finalHue = isCloseToGreen ? complementaryHue : greenHue;
+
+        return QColor::fromHsl(finalHue, green.hslSaturation(), green.lightness());
     }
 }
 
